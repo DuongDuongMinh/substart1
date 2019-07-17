@@ -1,0 +1,137 @@
+swagger : "2.0"
+
+info:
+   version: 1.0.0
+   title: company
+   description: website manges company information
+schemes:
+ - http
+host: localhost
+basePath: /
+
+paths:
+    /userList:
+       get:
+          summary: List of users
+          description: All users in the company
+          responses:
+            200:
+              description: Return user list.
+              schema:
+                $ref : "#/definitions/Users"
+    
+    /userByUsername:
+      get:
+         summary: a user
+         description: get information of user.
+         parameters:
+            - name: username
+              type: string
+              required: true
+              in : query
+              description: username of user
+         responses:
+           200:
+              description: return a user.
+              schema: 
+                 $ref : '#/definitions/User'
+    /userById:
+      get:
+        summary: get user
+        description: get information of user
+        parameters:
+          - name: id
+            type: string
+            required: true
+            in: query
+            description: id of user
+        responses: 
+           200:
+              description : return a user.
+              schema:
+                 $ref: '#/definitions/User'
+    /signup:
+       post:
+          summary: create account
+          description: create account for employee in company
+          parameters:
+          - in: body
+            name: body
+            required: true
+            schema:
+              type: array
+              items:
+               $ref: "#/definitions/User"
+          responses:
+             200:
+                 description:  create account successfully
+    /updateById:
+       put:
+         summary: update account
+         description: update information of user
+         parameters:
+          - name: id
+            in: query
+            type: string
+            required: true
+            description: id of the user
+          - in: body
+            name: body
+            required: true
+            description: update user object
+            
+            schema: 
+             $ref: "#/definitions/User"
+         responses:
+           200:
+             description: update cuccessfully.
+             
+    /deleteById:
+        delete:
+           summary: delete account
+           description: remove account from company system
+           parameters:
+             - name: id
+               in : query
+               required: true
+               description: id of the user
+               type: string
+            responses: 
+              200: 
+               description: delete successfully
+    
+definitions:
+    User:
+      required: 
+        - username
+        - id
+      properties:
+        id:
+         type: string
+        username:
+          pattern: '[a-z0-9]{8, 50}'
+          type: string
+        birthDay: 
+          type : string
+          format: date
+        country:
+          type : string
+    
+    Users:
+       type: array
+       items:
+         $ref: '#/definitions/User'
+         
+
+    
+        
+    
+        
+
+    
+      
+        
+        
+          
+            
+            
