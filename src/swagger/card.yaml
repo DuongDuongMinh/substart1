@@ -1,0 +1,214 @@
+swagger: '2.0'
+
+info:
+  description: the company system manages information about employees, products, manufacturing proccess.
+  title: comspaces
+  version: 1.0.0
+  contact:
+    name: comspaces
+    email: comspaces.io@gmail.com
+
+tags:
+  - name: home card
+    description: the rooms of empplyees
+    externalDocs:
+      description: see more
+      url: http://comspaces.io
+
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+paths:
+  /addHomeCard:
+    post:
+      tags:
+        - home card
+      summary: create home card
+      description: create home card and add to home card table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: homeCard object
+        schema:
+          allOf: 
+          - required:
+              - startDay
+              - finishDay
+              - roomNo
+              - buildNo
+              - cleaner
+              - employee
+          - $ref: '#/definitions/SettingHomeCard'
+      responses:
+        200:
+          description: create home card successfully.
+        405:
+          description: invalid input
+  
+  /addManyHomeCard:
+    post:
+      tags:
+        - home card
+      summary: create many home cards
+      description: create many home cards and add to home card table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: homeCard array
+        schema:
+          $ref: '#/definitions/SettingHomeCards'
+      responses:
+        200:
+          description: create many card successfully
+        405:
+          description: invalid input
+    
+  /homeCards:
+    get:
+      tags:
+        - home card
+      summary: get home card list
+      description: view information of home card table
+      responses:
+        200:
+          description: get home card list successfully
+          schema:
+            $ref: '#/definitions/HomeCards'
+        404:
+          description: not found home card
+  
+  /homeCards/{id}:
+    get:
+      tags:
+        - home card
+      summary: get home card by id
+      description: view information of home card
+      parameters:
+      - in: path
+        name: id
+        type: string
+        required: true
+        description: id of homeCard
+      responses:
+        200:
+          description: get home card successfully
+          schema:
+            $ref: '#/definitions/HomeCard'
+        400:
+          description: invalid id
+        404:
+          description: not found home card
+    put:
+      tags:
+        - home card
+      summary: update home card by id
+      description: update home card information 
+      parameters:
+      - in: path
+        name: id
+        type: string
+        required: true
+        description: id of homeCard
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/SettingHomeCard'
+      responses:
+        200:
+          description: update home card successfully
+        400: 
+          description: invalid id
+        404:
+          description: not found home card
+    
+    delete:
+      tags:
+        - home card
+      summary: delete home card by id
+      description: remove home card from home card table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of home card
+      responses:
+        200:
+          description: delete successfully
+        400:
+          description: invalid id
+        404: 
+          description: not found home card
+        
+  /homeCards/findByStatus:
+    get:
+      tags: 
+        - home card
+      summary: filte home card by properties
+      description: filte home card to view information
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: homeCard object
+        schema:
+          $ref: '#/definitions/HomeCard'
+      responses: 
+        200:
+          description: filter home card successfully
+          schema: 
+             $ref: '#/definitions/HomeCards'
+        404:
+          description: not found home card
+        405: 
+          description: invalid input
+      
+
+definitions:
+  
+  HomeCard:
+    type: object
+    allOf:
+    - properties:
+        id: 
+          type: string
+    - $ref: "#/definitions/SettingHomeCard"
+  
+  SettingHomeCard:
+    type: object
+    properties:
+      startDay:
+        type: string
+      finishDay:
+        type: string
+      roomNo:
+        type: string
+      buildNo:
+        type: string
+      cleaner:
+        type: string
+      employee:
+        type: string
+        
+  HomeCards:
+    type: array
+    items:
+      $ref: "#/definitions/HomeCard"
+    
+  SettingHomeCards:
+    type: array
+    items:
+      allOf:
+      - required:
+          - startDay
+          - finishDay
+          - roomNo
+          - cleaner
+          - employee
+      - $ref: '#/definitions/SettingHomeCard'
+        

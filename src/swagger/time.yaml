@@ -1,0 +1,213 @@
+swagger: '2.0'
+
+info:
+  description: the company system contains information about employees, products, manufacting process
+  title: Compsaces
+  version: 1.0.0
+  contact:
+    name: comspaces
+    email: comspaces.io@gmail.com
+
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+tags:
+- name: working time
+  description: timer list for employee
+  externalDocs:
+    description: see more
+    url: http://comspaces.io
+
+paths:
+  /addTime:
+    post:
+      tags:
+        - working time
+      summary: add time
+      description: add time to wroking time table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: time object
+        schema:
+          allOf:
+          - required:
+              - date
+              - startHour
+              - finishHour
+              - employee
+          - $ref: '#/definitions/SettingTime'
+      responses:
+        200: 
+          description: add time successfully
+        405: 
+          description: invalid input
+  
+  /addManyTimes:
+    post:
+      tags:
+        - working time
+      summary: add many time
+      description: add time list to the working time table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: time array
+        schema:
+          $ref: '#/definitions/SettingTimes'
+      responses:
+        200:
+          description: add many time successfully
+        405:
+          description: invalid input
+  
+  /times:
+    get:
+      tags:
+        - working time
+      summary: get time list
+      description: get time list from the working time table
+      responses: 
+        200: 
+          description: get time list successfully
+          schema:
+            $ref: '#/definitions/Times'
+        404:
+          description: not found time
+          
+  /times/{id}:
+    get:
+      tags:
+        - working time
+      summary: get time by id
+      description: view time information from sent object
+      parameters:
+      - in: path
+        name: id
+        type: string
+        required: true
+        description: id of time
+      responses: 
+        200:
+          description: get time successfully
+          schema: 
+            $ref: '#/definitions/Time'
+        400:
+          description: invalid id
+        404:
+          description: not found time
+        
+    put:
+      tags:
+        - working time
+      summary: update a time
+      description: update information of time to working time table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of time
+      - in: body
+        name: body
+        required: true
+        description: time object
+        schema: 
+          $ref: '#/definitions/SettingTime'
+      responses:
+        200: 
+          description: update time successfully.
+        400: 
+          description: invalid id
+        404: 
+          description: not found time
+    
+    delete:
+      tags:
+        - working time
+      summary: delete a time
+      description: delete a time from working time table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of time
+      responses: 
+        200:
+          description: delete time successfully.
+        400:
+          description: invalid id
+        404: 
+          description: not found time
+  
+  /times/findByStatus:
+    get:
+      tags:
+        - working time
+      summary: filter time
+      description: filter time by properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: time object
+        schema: 
+          $ref: '#/definitions/Time'
+      responses:
+        200:
+          description: find time(s) successfully
+          schema:
+            $ref: '#/definitions/Times'
+        404: 
+          description: not found time
+        405: 
+          description: invalid input 
+        
+
+  
+definitions:
+  Time:
+    allOf:
+    - type: object
+      properties:
+        id: 
+          type: string
+    - $ref: '#/definitions/SettingTime'
+  
+  SettingTime:
+    type: object
+    properties:
+      date: 
+        type: string
+        format: date
+      startHour:
+        type: string
+        format: time
+      finishHour:
+        type: string
+        format: time
+      employee:
+        type: string
+        
+  Times:
+    type: array
+    items:
+      $ref: '#/definitions/Time'
+      
+  SettingTimes:
+    type: array
+    items:
+      allOf:
+      - required: 
+          - date
+          - startHour
+          - finishHour
+          - employee
+      - $ref: '#/definitions/SettingTime'
+    
+     

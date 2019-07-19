@@ -1,0 +1,199 @@
+swagger: '2.0'
+
+info:
+  description: The company system manages information about employees, products and manufacturing process.
+  title: Comspaces
+  version: 1.0.0
+  contact:
+    name: comspaces
+    email: comspaces.io@gmail.com
+  
+tags: 
+  - name: permission
+    description: role of user with comspaces website
+    externalDocs:
+      description: see more
+      url: http://comspaces.io
+
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+paths:
+  /addPermission:
+    post:
+      tags:
+        - permission
+      summary: create permission
+      description: create permission and add the permission table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: permission object
+        schema:
+          allOf: 
+          - required:
+             - area
+             - employee
+          - $ref: '#/definitions/SettingPermission'
+      responses:
+        200:
+          description: create permission successfully
+        405: 
+          description: invalid input
+          
+  /addManyPermissions:
+    post: 
+      tags:
+        - permission
+      summary: create many permisstions
+      description: create many permisstions and add to permission table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: permission object
+        schema:
+          $ref: '#/definitions/SettingPermissions'
+      responses:
+        200:
+          description: create persmissions successfully
+        405:
+          description: invalid input
+          
+  /permissions:
+    get:
+      tags:
+       - permission
+      summary: get permission list
+      description: get all permissions from permission table for get accessing area
+      responses:
+        200: 
+          description: get permisstions successfully
+          schema: 
+           $ref: '#/definitions/Permissions'
+        404:
+          description: not found permission
+  
+  /permissions/{id}:
+    get:
+      tags:
+        - permission
+      summary: get permission by id
+      description: permission information for accessing area
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: id of permission
+      responses:
+        200:
+          description: get permission successfully
+          schema:
+            $ref: '#/definitions/Permission'
+        400:
+          description: invalid id
+        404:
+          description: not found description
+    
+    put:
+      tags:
+        - permission
+      summary: update permission
+      description: update permission information to permission table
+      parameters: 
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of permission
+      - in: body
+        name: body
+        required: true
+        description: permission object
+        schema: 
+          $ref: '#/definitions/SettingPermission'
+      responses:
+        200: 
+          description: update permission successfully
+        400:
+          description: invalid id
+        404:
+          description: not found permission
+          
+    delete:
+      tags: 
+        - permission
+      summary: delete permission
+      description: delete permission from permission table
+      parameters:
+      - in: path
+        name: id
+        description: id of permission
+        required: true
+        type: string
+      responses:
+        200:
+          description: delete permission successfully
+        400:
+          description: invalid id
+        404:
+          description: not found permission
+          
+  /permissions/findByStatus:
+    get:
+      tags:
+        - permission
+      summary: filte permission
+      description: filte permission form permission table following properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: permission object
+        schema: 
+          $ref: '#/definitions/Permission'
+      responses:
+        200:
+          description: filte permission(s) successfully
+          schema:
+            $ref: '#/definitions/Permissions'
+        404:
+          description: not found permission
+        405:
+          description: invalid input
+
+definitions:
+ 
+  Permission:
+    allOf:
+      - type: object
+        properties:
+          id:
+            type: string
+      - $ref: '#/definitions/SettingPermission'
+  
+  SettingPermission:
+    type: object
+    properties:
+      area: 
+        type: string
+      employee: 
+        type: string
+        
+  Permissions:
+    type: array
+    items:
+      $ref: '#/definitions/Permission'
+      
+  SettingPermissions:
+    type: array
+    items:
+      allOf:
+      - required:
+        - area
+        - employee
+      - $ref: '#/definitions/SettingPermission'

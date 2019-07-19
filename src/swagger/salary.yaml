@@ -1,0 +1,233 @@
+swagger: "2.0"
+
+info:
+  description: Company System manages employees, product and manufaturing process
+  title: Company
+  version: 1.0.0
+  contact:
+    name: me
+    email: comspaces.io@gmail.com
+
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+tags:
+- name: 'salary'
+  description: salary list of all employees
+  externalDocs:
+    description: see more
+    url: http://comspaces.io
+
+paths:
+  /addSalary:
+    post:
+      tags:
+        - salary
+      summary: add salary
+      description: create salary to comspaces system
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: salary object
+        schema:
+          allOf: 
+          - required: 
+              - startDay
+              - finishDay
+              - pay
+              - employee
+          - $ref: '#/definitions/SettingSalary'
+      responses:
+        200:
+          description: create salary successfully
+        405:
+          description: invalid input
+  
+  /addManySalary:
+    post:
+      tags: 
+        - salary
+      summary: add many salary
+      description: create salary list and add to table salary
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: array of salary object
+        schema:
+          
+          $ref: "#/definitions/SettingSalaries"
+      responses: 
+        200: 
+          description: add salary list successfully
+        405: 
+          description: invalid input
+  
+  /salaries:
+    get:
+      tags:
+        - salary
+      summary: get salary List
+      description: view all salaries contain salary table
+      responses:
+        200: 
+          description: salary lists
+          schema: 
+            $ref: '#/definitions/Salaries'
+        404:
+          description: not found salary
+        
+  /salaries/{id}:
+    put:
+      tags:
+        - salary
+      summary: update salary
+      description: update salary contents in salary table
+      parameters:
+      - in: path
+        name: id
+        type: string
+        required: true
+        description: id of salary
+      - in: body
+        name: body
+        required: true
+        description: salary object
+        schema:
+          $ref: "#/definitions/SettingSalary"
+      responses:
+        200:
+          description: update salary successfully
+        400:
+          description: invalid id
+        404:
+          description: not found salary
+    
+    get:
+      tags:
+        - salary
+      summary: get a salary by id
+      description: get salary information from salary table
+      parameters:
+      - in : path
+        name: id
+        required: true
+        type: string
+        description: id of salary
+      responses:
+        200: 
+          description: get one salary
+          schema:
+            $ref: '#/definitions/Salary'
+        400:
+          description: invalid id
+        404: 
+          description: not found salary
+    
+    delete: 
+      tags:
+        - salary
+      summary: delete salary
+      description: delete one salary from salary table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of salary
+      responses:
+        200: 
+          description: delete salary successfully
+        400:
+          description: invalid id
+        404:
+          description: not found salary
+        
+  /salaries/findByStatus:
+    get:
+      tags: 
+        - salary
+      summary: filter salary
+      description: filter salary with properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: salary object
+        schema: 
+          $ref: '#/definitions/Salary'
+      responses:
+        200:
+          description: filter salary(s) successfully
+          schema:
+             $ref: '#/definitions/Salaries'
+        404:
+          description: not found salary
+        405:
+          description: invalid input
+           
+  
+definitions:
+
+  Salary:
+    allOf:
+    - type: object
+      properties:
+        id:
+          type: string
+    - $ref: '#/definitions/SettingSalary'
+  
+  SettingSalary:
+    type: object
+    properties:
+      startDay: 
+        type: string
+        format: date
+      finishDay:
+        type: string
+        format: date
+      pay:
+        type: integer
+      bonus:
+        type: integer
+      support:
+        type: integer
+      insurance: 
+        type: integer
+      employee:
+        type: string
+          
+  Salaries:
+    type: array
+    items:
+      $ref: '#/definitions/Salary'
+  
+  SettingSalaries:
+    type: array
+    items:
+      allOf:
+      - required:
+            - startDay
+            - finishDay
+            - pay
+            - employee
+      - $ref: '#/definitions/SettingSalary'
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          

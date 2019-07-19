@@ -1,0 +1,235 @@
+swagger: '2.0'
+
+info:
+  description: The company system manages information about employees, products, manufacturing process
+  version: 1.0.0
+  title: comspaces
+  contact:
+    name: comspaces
+    email: comspaces.io@gmail.com
+    
+tags:
+  - name: task
+    description: the task of employee in the comspaces
+    externalDocs:
+      description: see more
+      url: http://comspaces.io
+      
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+paths:
+  /addTask:
+    post: 
+      tags:
+        - task
+      summary: create task
+      descrition: create task for employee and add to task table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: task object
+        schema:
+          allOf: 
+          - required:
+             - startDay
+             - finishDay
+             - info
+             - goal
+             - employee
+          - $ref: '#/definitions/SettingTask'
+      responses:
+        200:
+          description: create task successfully
+        405:
+          description: invalid input
+    
+  /addManyTask:
+    post:
+      tags:
+        - task
+      summary: create many task
+      description: create many task for employees and add to task table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: task array
+        schema:
+          $ref: '#/definitions/SettingTasks'
+      responses:
+        200: 
+          description: add tasks successfully
+        404:
+          description: invalid input
+  
+  /tasks:
+    get:
+      tags:
+        - task
+      summary: get task list
+      description: get task list from task table
+      responses: 
+        200:
+          description: get task list successfully
+          schema: 
+            $ref: '#/definitions/Tasks'
+        404:
+          description: not found task
+  
+  /tasks/{id}:
+    get:
+      tags:
+        - task
+      summary: get task by id
+      description: get task infomation for user
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        200: 
+          description: get task successfully
+          schema:
+            $ref: "#/definitions/Task"
+        400:
+          description: invalid id
+        404:
+          description: not found task
+  
+    put:
+      tags:
+        - task
+      summary: update one stack
+      description: update stack information to task table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of task
+      - in: body
+        name: body
+        required: true
+        description: task object
+        schema: 
+          $ref: '#/definitions/SettingTask'
+      responses:
+        200:
+          description: update task successfully
+        400: 
+          description: invalid id
+        404:
+          description: not found task
+    
+    delete:
+      tags:
+        - task
+      summary: delete one task
+      description: delete task from task table
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of task
+      responses:
+        200:
+          description: delete task successfully
+        400: 
+          description: invalid id
+        404:
+          description: not found task
+   
+  /tasks/findByStatus:
+    get:
+      tags:
+        - task
+      summary: filte task
+      description: filte task from tack table by properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: stack object
+        schema:
+          $ref: '#/definitions/Task'
+      responses: 
+        200:
+          description: filte task successfully
+          schema: 
+            $ref: '#/definitions/Tasks'
+        404:
+          description: not found task
+        405:
+          description: invalid input
+  
+  
+
+definitions:
+  
+  Task:
+    allOf:
+    - type: object
+      properties:
+        id:
+          type: string
+    - $ref: '#/definitions/SettingTask'
+
+  SettingTask:
+    type: object
+    properties:
+      startDay:
+        type: string
+        format: date
+      finishDay:
+        type: string
+        format: date
+      info:
+        type: string
+      goal:
+        type: string
+      employee:
+        type: string
+  
+  Tasks:
+    type: array
+    items:
+      $ref: '#/definitions/Task'
+      
+  SettingTasks:
+    type: array
+    items:
+      allOf:
+      - required: 
+          - startDay
+          - finishDay
+          - info
+          - goal
+          - employee
+      - $ref: '#/definitions/SettingTask'
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

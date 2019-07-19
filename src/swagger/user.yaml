@@ -1,0 +1,244 @@
+
+swagger: '2.0'
+
+info:
+  description: Company system manages infomation of employees, products, and manufacturing proccess
+  version: 1.0.0
+  title: Company
+  contact:
+    name: coms
+    email: coms@gmail.com
+    
+schemes:
+  - http
+host: company
+basePath: /coms
+
+consumes:
+ - application/json
+produces: 
+ - application/json
+ 
+tags:
+- name: user
+  description: Operations about user
+  externalDocs: 
+    description: see more
+    url: http://comspaces.io
+
+paths:
+  /signup:
+    post:
+      tags:
+        - user
+      summary: sign up account
+      description: sign up account to the company system.
+      parameters:
+        - in: body
+          name: body
+          description: the account needs to be added to the store
+          required: true
+          schema:
+            allOf:
+            - required:
+                - username
+                - password
+                - name
+                - gender
+                - birthday
+                - country
+            - $ref: '#/definitions/SettingUser'
+      responses:
+        '200':
+          description: create account successfully
+  /login:
+    get:
+      tags:
+        - user
+      summary: log in to account
+      description: user login to company system
+      parameters:
+        - in: body
+          name: body
+          description: username and password for login
+          required: true
+          schema:
+            required:
+              - username
+              - password
+            properties:
+              username: 
+                $ref: '#/definitions/username'
+              password: 
+                type: string
+              
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: username and and password are invalid
+        404:
+          description: User not found
+  /logout:
+    get:
+      tags:
+       - user
+      summary: log out account
+      description: log out user form system
+      responses:
+        200:
+          description: log out successfully
+     
+  /users:
+    get:
+      tags:
+      - user
+      summary: get all users
+      description: get information of all user in company
+      responses:
+        200:
+          description: succcessful operation.
+          schema:
+            $ref: '#/definitions/Users'
+        404:
+          description: not found user.
+          
+  /users/{id}:
+    put:
+      tags:
+      - user
+      summary: update info
+      description: update information of user through id.
+      parameters:
+      - name: id
+        in: path
+        type: string
+        description: id of user
+        required: true
+      - name: body
+        in: body
+        description: info to update
+        schema:
+          $ref: '#/definitions/SettingUser'
+      responses:
+        200:
+          description: update successfull 
+    get:
+      tags:
+      - user
+      summary: get user by id
+      description: get information of user from company system
+      parameters:
+      - name: id
+        in: path
+        type: string
+        description: id of user
+        required: true
+      responses:
+        200:
+          description: info user
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: invalid id
+        404:
+          description: not found user
+            
+  /users/findByStatus:
+    get: 
+      tags: 
+      - user
+      summary: filter user
+      description: find user through properties of user
+      parameters:
+      - in: body
+        name: body
+        description: info to filter
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        200:
+          description: info of user(s)
+          schema: 
+           $ref: '#/definitions/User'
+        400:
+          description: invalid properties 
+        404:
+          description: not found user
+          
+  /deleteAccount:
+    delete:
+      tags:
+      - user
+      summary: delete by account owner
+      description: delete account from system
+      responses: 
+        200:
+          description: delete successfully.
+          
+  /deleteUser/{id}:
+    delete: 
+      tags:
+      - user
+      summary: detete account by admin
+      description: delete acccount from system
+      parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: id of user
+      responses:
+        200:
+          description: delete successfully
+        400:
+          description: invalid id
+      
+definitions:
+  User:
+    allOf:
+      - type: object
+        properties:
+           id:
+             type: string
+      - $ref: '#/definitions/SettingUser'
+  
+  SettingUser:
+    type: object
+    properties:
+      username:
+        $ref: '#/definitions/username'
+      password:
+        type: string  
+      name:
+        type: string
+      birthDay:
+        type: string
+        format: date
+      gender:
+        type: string
+      country:
+        type: string
+        
+  Users:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+  
+  username:
+    type: string
+    properties:
+      username:
+        type: string
+        pattern: '[a-z0-9]{10-70}'
+        minLength: 10
+        maxLength: 70
+        exclusiveMinimum: false
+        uniqueItems: true
+  
+        
+
+

@@ -1,0 +1,218 @@
+swagger: '2.0'
+
+info: 
+  description: Company system cotains information of employees, products and manufacturing process
+  version: 1.0.0
+  title: Company
+  contact:
+    name: stack
+    email: comspace.io@gmail.com
+
+schemes:
+  - http
+host: comspace
+basePath: /coms
+
+tags: 
+  - name: product
+    description: information of product
+    externalDocs: 
+      description: see more 
+      url: http://comspaces.io
+
+paths:
+  /addProduct:
+    post:
+      tags: 
+        - product
+      summary: add one product
+      description: add product to table that contains all products
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: create product
+        schema:
+          allOf: 
+          - required:
+              - code
+              - name
+              - price
+              - date
+              - employee
+              - materials
+          - $ref: '#/definitions/SettingProduct'
+      responses:
+        200:
+          description: add product successfully
+        405:
+          description: invalid input
+  
+  /addManyProducts:
+    post:
+      tags: 
+       - product
+      summary: add many product
+      description: add products to table that contains all products
+      parameters: 
+        - in: body
+          name: body
+          required: true
+          description: create products
+          schema:
+            $ref: '#/definitions/SettingProducts'
+      responses:
+        200:
+          description: add many products successfully.
+        405:
+          description: invalid input
+  
+  /products:
+    get:
+      tags:
+        - product
+      summary: get product list
+      description: view all product in company system.
+      responses:
+        200:
+          description: get all product
+          schema:
+            $ref: "#/definitions/Products"
+  
+  /products/{id}:    
+    put:
+      tags: 
+        - product
+      summary: update per product
+      description: update new information to product table
+      parameters: 
+      - in: path
+        name: id
+        required: true
+        type: string
+        description: id of product
+      - in: body
+        name: body
+        required: true
+        description: product object
+        schema: 
+          $ref: "#/definitions/SettingProduct"
+      responses: 
+        200:
+          description: update successfully
+        405: 
+          description: invalid input
+          
+    get:
+      tags:
+        - product
+      summary: get product by id
+      description: take product form product table
+      parameters: 
+      - in: path
+        name: id
+        type: string
+        description: id of product
+        required: true
+      responses:
+        200:
+          description: get product
+          schema:
+            $ref: '#/definitions/Product'
+        400:
+          description: invalid id
+        404:
+          description: not found product
+  
+    delete:
+      tags: 
+        - product
+      summary: delete product
+      description: delete product from system
+      parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: id of product
+      responses:
+        200: 
+          description: delete product successfully.
+        400:
+          description: invalid id
+        404: 
+          description: not found product
+        
+  /products/findByStatus:
+    get:
+      tags:
+       - product
+      summary: filter product
+      description: filter product with properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: product object
+        schema:
+          $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: get product(s)
+          schema:
+            $ref: "#/definitions/Products"
+        404: 
+          description: not found product
+
+
+definitions:
+
+  Product:
+    allOf:
+    - type: object
+      properties:
+        id:
+          type: string
+    - $ref: '#/definitions/SettingProduct'
+    
+    
+  SettingProduct:
+    type: object
+    properties:
+      code: 
+        type: string
+      name:
+        type: string
+      date:
+        type: string
+        format: date
+      price:
+        type: integer
+      employee:
+        type: string
+      materials: 
+        type: array
+        items:
+          type: string
+          
+        
+  Products:
+    type: array
+    items:
+      $ref: '#/definitions/Product'
+  
+  SettingProducts:
+    type: array
+    items:
+      allOf:
+      - required: 
+          - code
+          - name
+          - date
+          - price
+          - employee
+          - materials
+      - $ref: '#/definitions/SettingProduct'
+      
+
+        

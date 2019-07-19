@@ -1,0 +1,222 @@
+swagger: '2.0'
+
+info:
+  description: the company system contains information of employeess, products, and manufacturing process.
+  version: 1.0.0
+  title: Comspaces
+  contact:
+    name: comspaces
+    email: comspaces.io@gamil.com
+    
+tags:
+  - name: eating ticket
+    description: eating ticket of employees 
+    externalDocs:
+      description: see more
+      url: http://comspaces.io
+      
+schemes:
+  - http
+host: comspaces
+basePath: /coms
+
+
+paths:
+  /addTicket:
+    post:
+      tags:
+        - eating ticket
+      summary: create ticket 
+      description: add ticket to eating ticket table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: ticket object
+        schema:
+          allOf:
+          - required: 
+              - startDay
+              - finishDay
+              - employee
+              - lunch
+              - dinner
+              - breakfast
+          - $ref: '#/definitions/SettingTicket'
+      responses:
+        200:
+          description: create ticket successfully
+        405:
+          description: invalid input
+      
+  /addManyTickets:
+    post:
+      tags:
+        - eating ticket
+      summary: add many ticket
+      description: add many tickets to eating ticket table
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: ticket object
+        schema:
+          $ref: '#/definitions/SettingTickets'
+      responses:
+        200:
+          description: add tickets successfull
+        405:  
+          description: invalid input
+  /tickets:
+    get:
+      tags:
+        - eating ticket
+      summary: get ticket list
+      description: get ticket list from eating ticket table
+      responses:
+        200: 
+           description: ticket list
+           schema: 
+             $ref: '#/definitions/Tickets'
+        404:
+           description: not found ticket
+  
+  /tickets/{id}:
+    get:
+      tags:
+        - eating ticket
+      summary: get ticket by id
+      description: get ticket information for user
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: id of ticket
+        type: string
+      responses:
+        200: 
+          description: get ticket successfully
+          schema: 
+            $ref: '#/definitions/Ticket'
+        400: 
+          description: invalid id
+        404:
+          description: not found ticket
+    
+    put:
+      tags:
+        - eating ticket
+      summary: update ticket
+      description: update ticket information to eating ticket table
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: id of ticket
+          type: string
+        - in: body
+          name: body
+          required: true
+          description: ticket object
+          schema: 
+            $ref: '#/definitions/SettingTicket'
+      responses:
+        200: 
+          description: update ticket successfully
+        400:
+          description: invalid id
+        404: 
+          description: not found ticket
+    
+    delete:
+      tags:
+        - eating ticket
+      summary: delete ticket
+      description: delete ticket from eating ticket table
+      parameters:
+      - in: path
+        name: id
+        type: string
+        description: id of ticket
+        required: true
+      responses:
+        200:
+          description: delete ticket successfully
+        400:
+          description: invalid id
+        404:
+          description: not found ticket
+  
+  /tickets/findByStatus:
+    get:
+      tags:
+        - eating ticket
+      summary: filter ticket
+      description: filter ticket by properties
+      parameters:
+      - in: body
+        name: body
+        required: true
+        description: ticket object
+        schema:
+          $ref: '#/definitions/Ticket'
+      responses:
+        200:
+          description: filter ticket(s) successfully
+          schema: 
+            $ref: '#/definitions/Tickets'
+  
+definitions:
+  
+  Ticket:
+    allOf:
+    - type: object
+      properties: 
+        id:
+          type: string
+    - $ref: '#/definitions/SettingTicket'
+    
+  SettingTicket:
+    type: object
+    properties: 
+      startDay:
+        type: string
+        format: date
+      finishDay:
+        type: string
+        format: date
+      breakfast:
+        type: string
+      lunch: 
+        type: string
+      dinner:
+        type: string
+      employee:
+        type: string
+        
+  Tickets:
+    type: array
+    items:
+      $ref: '#/definitions/Ticket'
+  
+  SettingTickets:
+    type: array
+    items:
+      allOf:
+      - required:
+          - startDay
+          - finishDay
+          - employee
+          - breakfast
+          - lunch
+          - dinner
+      - $ref: '#/definitions/SettingTicket'
+  
+    
+    
+    
+    
+    
+    
+    
+    
