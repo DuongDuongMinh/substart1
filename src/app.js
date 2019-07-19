@@ -49,13 +49,6 @@ var permission = new Permission();
 permission.connect(app);
 
 
-
-function view(swagFileName, viewName) {
-   const filePath = yaml.load(swagFileName);
-   app.use(viewName , serve, swaggerUi.setup(filePath, option));
-   
-}
-
 app.listen(8080, (req, res) =>{
     console.log('web server listens 8080');
 });
