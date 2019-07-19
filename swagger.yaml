@@ -1,0 +1,84 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Company
+  description: The information of company
+schemes:
+  - http
+paths:
+  /signup:
+    post:
+      tags:
+        - singup
+      summary: sign up account
+      description: sign up account to the company system.
+      parameters:
+        - in: body
+          name: body
+          description: the account needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: create account successfully
+  /login:
+    get:
+      tags:
+        - login
+      summary: login to account
+      description: user login to company system
+      parameters:
+        - in: query
+          name: username
+          description: username of user account
+          required: true
+          type: string
+        - in: body
+          name: password
+          description: password of account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: username and and password are invalid
+        '404':
+          description: User not found
+  /users:
+    get:
+      tags: '-users'
+      summary: user
+definitions:
+  User:
+    required:
+      - username
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+        pattern: '[a-z0-9]{10, 70}'
+        minLength: 10
+        exclusiveMinimum: false
+        maxLength: 70
+      name:
+        type: string
+      password:
+        type: string
+      birthDay:
+        type: string
+        format: date
+      country:
+        type: string
+      gender:
+        type: string
+        maxLength: 15
+  Users:
+    type: array
+    items:
+      $ref: '#/definitions/User'
